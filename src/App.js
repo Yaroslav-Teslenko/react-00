@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
+import ClassCounter from "./components/ClassCounter";
+import Counter from "./components/Counter";
 //react импортируем в каждый файл где мы создаем компонент
 //
 /*
@@ -7,32 +9,24 @@ react не понимает что в конкретном компоненте 
 для этого придумано состоянии(State). каждый компонент обладает каким-то состоянием и при изменении этого состояния react понимает что произошли изменения и перерисовывает компонент
  */
 function App() {
-  const [likes, setLikes] = useState(0);
-  const [value, setValue] = useState("Text in input");
-
-  function increment() {
-    setLikes(likes + 1);
-    //!!! мы не изменяем state  напрямую !!!
-  }
-  function decrement() {
-    setLikes(likes - 1);
-    //!!! мы не изменяем state  напрямую !!!
-  }
   return (
     <div className="App">
-      <h1>{likes}</h1>
-      <h1>{value} </h1>
-      <input type="text" value={value} onChange={(event) => setValue(event.target.value)} />
-      <button onClick={increment}> Increment</button>
-      <button onClick={decrement}> Decrement </button>
+      <Counter />
+      <ClassCounter />
     </div>
   );
 }
-/* двустороннее связывание на примере input */
+/* создание компонентов */
 /*
-   <input type="text" value={value}
-   onChange={(event) => setValue(event.target.value)} />
+Counter.jsx функционалиный компонент
+ClassCounter.jsx классовый компонент
 
-   сразу достаем event.target.value и  изменяем state
+
+классовый компонент это устаревший подход.
+разработчики рекомендут использовать
+функциональные компоненты и хуки, чтобы этими
+функциональными компонентами управлять
+
+
 */
 export default App;
