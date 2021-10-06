@@ -8,35 +8,31 @@ react не понимает что в конкретном компоненте 
  */
 function App() {
   const [likes, setLikes] = useState(0);
-  console.log(likes);
-  console.log(setLikes);
+  const [value, setValue] = useState("Text in input");
+
   function increment() {
     setLikes(likes + 1);
+    //!!! мы не изменяем state  напрямую !!!
   }
   function decrement() {
     setLikes(likes - 1);
+    //!!! мы не изменяем state  напрямую !!!
   }
   return (
     <div className="App">
       <h1>{likes}</h1>
+      <h1>{value} </h1>
+      <input type="text" value={value} onChange={(event) => setValue(event.target.value)} />
       <button onClick={increment}> Increment</button>
       <button onClick={decrement}> Decrement </button>
     </div>
   );
 }
+/* двустороннее связывание на примере input */
 /*
+   <input type="text" value={value}
+   onChange={(event) => setValue(event.target.value)} />
 
-const state = useState();
-console.log(state);
-
-внутри -  это массив состоящий из двух элементов
-первый элемент это само значение которое мы объявили
-второй элемент функция, предназначеная для того чтобы изменять
-
-поскольку мы знаем что estate возвращает массив из двух объектов
-мы можем сделать деструктуризацию и сразу получить само состояние и функцию
-
-и сразу инициализируем , н-р 5
-const [state, setState ]= useState(5);
+   сразу достаем event.target.value и  изменяем state
 */
 export default App;
