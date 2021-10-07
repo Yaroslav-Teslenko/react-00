@@ -1,32 +1,30 @@
 import React from "react";
-import ClassCounter from "./components/ClassCounter";
-import Counter from "./components/Counter";
-//react импортируем в каждый файл где мы создаем компонент
-//
-/*
-react не понимает что в конкретном компоненте произошли какие-то изменения,
-ему это необходимо явно сообщить .
-для этого придумано состоянии(State). каждый компонент обладает каким-то состоянием и при изменении этого состояния react понимает что произошли изменения и перерисовывает компонент
- */
+import "./App.css";
+import PostItem from "./components/PostItem";
 function App() {
   return (
     <div className="App">
-      <Counter />
-      <ClassCounter />
+      <PostItem post={{ id: 1, title: "JavaScript", body: "description" }} />
     </div>
   );
 }
-/* создание компонентов */
+/* передача данных */
 /*
-Counter.jsx функционалиный компонент
-ClassCounter.jsx классовый компонент
+<PostItem value={"test"} item={{ title: 0 }}
+>>const PostItem = (props) => {...}
+    {value: 'test', item: {…}, number: 42}
+      item: {title: 0}
+      number: 42
+      value: "test"
+    [[Prototype]]: Object
 
+    {props.number }
+    {props.item.title}
 
-классовый компонент это устаревший подход.
-разработчики рекомендут использовать
-функциональные компоненты и хуки, чтобы этими
-функциональными компонентами управлять
+*/
 
-
+/* добавление стилей */
+/*
+- className вместо class
 */
 export default App;
