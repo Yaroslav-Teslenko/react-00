@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "./App.css";
-import PostItem from "./components/PostItem";
+import "./styles/App.css";
+import PostList from "./components/PostList";
 function App() {
   const [posts, setPosts] = useState([
     { id: 1, title: "JavaScript", body: "description" },
@@ -9,10 +9,7 @@ function App() {
   ]);
   return (
     <div className="App">
-      <h1 style={{ textAlign: "center" }}>Список постов</h1>
-      {posts.map((post) => (
-        <PostItem post={post} key={post.id} />
-      ))}
+      <PostList posts={posts} title={"Список постов 1"} />
     </div>
   );
 }
