@@ -9,19 +9,29 @@ function App() {
     { id: 2, title: "JavaScript2", body: "description2" },
     { id: 3, title: "JavaScript3", body: "description3" },
   ]);
-  const [title, setTitle] = useState();
-  const bodyInputRef = useRef();
+  // const [title, setTitle] = useState("");
+  // const [body, setBody] = useState("");
+  // заменим на объект
+  const [post, setPost] = useState({ title: "", body: "" });
+
   const addNewPost = (e) => {
     e.preventDefault();
-    console.log(title);
-    console.log(bodyInputRef.current.value);
+
+    // const newPost = { id: Date.now(), title, body };
+    // setPosts([...posts, newPost]);
+    /* !!!опять же мы не изменяем состоянии напрямую мы вызываем функцию set, после передаем туда новый массив, куда разворачиваем старый массив с уже существующими постами и в конец добавляем новый пост. запомните это раз и навсегда это очень важная концепция */
+    // setTitle("");
+    // setBody("");
+    //
+    setPosts([...posts, { ...post, id: Date.now() }]);
+    setPost({ title: "", body: "" });
   };
   return (
     <div className="App">
       <form action="">
-        <MyInput type="text" placeholder="Название поста" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <MyInput type="text" placeholder="Название поста" value={post.title} onChange={(e) => setPost({ ...post, title: e.target.value })} />
         {/*  */}
-        <MyInput type="text" placeholder="Описание поста" ref={bodyInputRef} />
+        <MyInput type="text" placeholder="Описание поста" value={post.body} onChange={(e) => setPost({ ...post, body: e.target.value })} />
 
         {/*  */}
         <MyButton onClick={addNewPost}>Создать пост</MyButton>
