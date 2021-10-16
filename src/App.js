@@ -2,17 +2,35 @@ import React, { useRef, useState } from "react";
 import "./styles/App.css";
 import PostList from "./components/PostList";
 // import MyButton from "./components/UI/button/MyButton";
-// import MyInput from "./components/UI/input/MyInput";
+import MyInput from "./components/UI/input/MyInput";
 import PostForm from "./components/PostForm";
+import MySelect from "./components/UI/select/MySelect";
 function App() {
   const [posts, setPosts] = useState([
-    { id: 1, title: "JavaScript", body: "description" },
-    { id: 2, title: "JavaScript2", body: "description2" },
-    { id: 3, title: "JavaScript3", body: "description3" },
+    { id: 1, title: "4JavaScript", body: "description" },
+    { id: 2, title: "2JavaScript2", body: "description2" },
+    { id: 3, title: "1JavaScript3", body: "description3" },
   ]);
-  // const [title, setTitle] = useState("");
-  // const [body, setBody] = useState("");
-  // заменим на объект
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [selectedSort, setSelectedSort] = useState("");
+  /* помним, что состоянии напрямую изменять нельзя развернем посты в новый массив и отсортируем уже его*/
+
+  function getSortedPosts() {
+    if (selectedSort) {
+      /* функция каждый раз вызывается и каждый раз мы сортируем массив.
+        функция вызывается на каждую перерисовку, на каждый render компонента.
+        такое поведение нас не устраивает , это нерационально */
+      console.log("getSortedPosts");
+      return [...posts].sort((a, b) => a[selectedSort].localeCompare(b[selectedSort]));
+    }
+    return posts;
+  }
+  const sortedPosts = getSortedPosts();
+  const sortPosts = (sort) => {
+    setSelectedSort(sort);
+  };
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
@@ -24,10 +42,26 @@ function App() {
     <div className="App">
       {/* передаем фунц-ю , хтобы получить новое значение */}
       <PostForm create={createPost} />
+      <hr style={{ margin: "15px" }} />
+      <div>
+        <MyInput vaue={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="find"></MyInput>
+        <MySelect
+          value={selectedSort}
+          onChange={sortPosts}
+          defaultValue="Сoртировка"
+          options={[
+            { value: "title", name: "По названию" },
+            { value: "body", name: "По содержанию" },
+          ]}
+        >
+          {" "}
+        </MySelect>
+      </div>
+
       {/* передаем фунц-ю remove */}
       {/* + условная отрисовка */}
 
-      {posts.length !== 0 ? <PostList posts={posts} remove={removePost} title="Список постов" /> : <h1 style={{ textAlign: "center" }}>Empty</h1>}
+      {posts.length !== 0 ? <PostList posts={sortedPosts} remove={removePost} title="Список постов" /> : <h1 style={{ textAlign: "center" }}>Empty</h1>}
     </div>
   );
 }
