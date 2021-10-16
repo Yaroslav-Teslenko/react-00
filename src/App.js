@@ -1,8 +1,9 @@
 import React, { useRef, useState } from "react";
 import "./styles/App.css";
 import PostList from "./components/PostList";
-import MyButton from "./components/UI/button/MyButton";
-import MyInput from "./components/UI/input/MyInput";
+// import MyButton from "./components/UI/button/MyButton";
+// import MyInput from "./components/UI/input/MyInput";
+import PostForm from "./components/PostForm";
 function App() {
   const [posts, setPosts] = useState([
     { id: 1, title: "JavaScript", body: "description" },
@@ -12,31 +13,21 @@ function App() {
   // const [title, setTitle] = useState("");
   // const [body, setBody] = useState("");
   // заменим на объект
-  const [post, setPost] = useState({ title: "", body: "" });
 
-  const addNewPost = (e) => {
-    e.preventDefault();
-
-    // const newPost = { id: Date.now(), title, body };
-    // setPosts([...posts, newPost]);
-    /* !!!опять же мы не изменяем состоянии напрямую мы вызываем функцию set, после передаем туда новый массив, куда разворачиваем старый массив с уже существующими постами и в конец добавляем новый пост. запомните это раз и навсегда это очень важная концепция */
-    // setTitle("");
-    // setBody("");
-    //
-    setPosts([...posts, { ...post, id: Date.now() }]);
-    setPost({ title: "", body: "" });
+  const createPost = (newPost) => {
+    setPosts([...posts, newPost]);
+  };
+  const removePost = (post) => {
+    setPosts(posts.filter((p) => p.id !== post.id));
   };
   return (
     <div className="App">
-      <form action="">
-        <MyInput type="text" placeholder="Название поста" value={post.title} onChange={(e) => setPost({ ...post, title: e.target.value })} />
-        {/*  */}
-        <MyInput type="text" placeholder="Описание поста" value={post.body} onChange={(e) => setPost({ ...post, body: e.target.value })} />
+      {/* передаем фунц-ю , хтобы получить новое значение */}
+      <PostForm create={createPost} />
+      {/* передаем фунц-ю remove */}
+      {/* + условная отрисовка */}
 
-        {/*  */}
-        <MyButton onClick={addNewPost}>Создать пост</MyButton>
-      </form>
-      <PostList posts={posts} title={"Список постов"} />
+      {posts.length !== 0 ? <PostList posts={posts} remove={removePost} title="Список постов" /> : <h1 style={{ textAlign: "center" }}>Empty</h1>}
     </div>
   );
 }
