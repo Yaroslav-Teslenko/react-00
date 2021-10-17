@@ -12,6 +12,7 @@ import MyButton from "./components/UI/button/MyButton";
 import { usePosts } from "./hooks/usePosts";
 import PostService from "./API/PostService";
 import { useFetching } from "./hooks/useFetching";
+import { getPageCount, getPagesArray } from "./utils/pages";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -21,15 +22,48 @@ function App() {
   const sortrdAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
   // const [isPostLoading, setPostLoading] = useState(false);
 
+  /* реализуем постртаничность.
+  сделаем запрос
+  https://jsonplaceholder.typicode.com/posts?_limit=10&_page=2
+  выберем их хедеров, короторые предоствлзет  jsonplaceholder
+   x-total-count:   это общее количество постов, которое может вернуть сервер. больше у него их нет и на основании этой цифры мы можем посчитать общее количество страниц.
+ */
+  const [totalPages, setTotalPages] = useState(0);
+  const [limit, setLimit] = useState(5);
+  const [page, setPage] = useState(1);
   const [fetchPosts, isPostLoading, postError] = useFetching(async () => {
-    const posts = await PostService.getAll();
-    setPosts(posts);
+    const responce = await PostService.getAll(limit, page);
+    setPosts(responce.data);
+    const totalCount = responce.headers["x-total-count"];
+    setTotalPages(getPageCount(totalCount, limit));
+    //console.log(responce.headers["x-total-count"]);
   });
+
+  let pageArray = getPagesArray(totalPages);
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [page]);
 
+  const changePage = (page) => {
+    /* у такого подхода будут некоторые проблемы
+    откроем вкладку network , оследим нажатия на пагинацию
+    posts?_limit=5&_page=1 , posts?_limit=5&_page=2 и тд.
+    и увидим отставание.
+     дело в том , что fetchPosts внутри себя используют состоянии limit и page. порядок операций у нас такой - мы сначала это состояние изменяем,  потом вызываю функцию fetch .
+     изменение состояния - это асинхронный процесс .
+     для чего это нужно ? например у нас вызывается несколько функций которые изменяют состояние,  это вызывает к изменению каких-то дочерних компонентов. в этих компонентахпроисходят какие-то сайт эффекты и в целях оптимизации react не применяет изменения по одному. условно он накапливает некоторую пачку и применяет эти изменения разу/ом, чтобы избежать повторных манипуляций с DOM.  получается так что мы состоянии изменили, вызвали fetchPosts, но при этом там замкнуто состояние старое, page попадаeт в запрос с некоторым отставанием.
+
+     это можно решить несколькими способами.
+     например, в массив зависимостей useEffect() добавить page
+     useEffect(() => { fetchPosts();}, [page]);
+     a здесь вызов этой функции changePage убрать
+     таким образом useEffect() будет следить за изменением странице и мы будем получать нужные данные .
+
+    */
+    setPage(page);
+    // fetchPosts();
+  };
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
     setModal(false);
@@ -57,6 +91,13 @@ function App() {
       ) : (
         <PostList posts={sortrdAndSearchedPosts} remove={removePost} title="Список постов" />
       )}
+      <div className="page">
+        {pageArray.map((p) => (
+          <span onClick={() => changePage(p)} key={p} className={page === p ? "page page__current" : "page"}>
+            {p}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
