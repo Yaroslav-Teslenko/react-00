@@ -8,6 +8,7 @@ import MySelect from "./components/UI/select/MySelect";
 import PostFilter from "./components/PostFilter";
 import MyModal from "./components/UI/MyModal/MyModal";
 import MyButton from "./components/UI/button/MyButton";
+import { usePosts } from "./components/hooks/usePosts";
 function App() {
   const [posts, setPosts] = useState([
     { id: 1, title: "1 aa", body: "eeee" },
@@ -17,20 +18,7 @@ function App() {
 
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const [modal, setModal] = useState();
-  const sortedPosts = useMemo(() => {
-    //console.log("sortedPosts");
-    if (filter.sort) {
-      return [...posts].sort((a, b) => a[filter.sort].localeCompare(b[filter.sort]));
-    }
-    return posts;
-
-    /* теперь в константе sortedPosts у нас лежит еще один массив отсортированый,  и при этом массив пост никак не изменяется. на  основании этого отсортированного массива мы можем делать поиск */
-  }, [filter.sort, posts]);
-
-  const sortrdAndSearchedPosts = useMemo(() => {
-    return sortedPosts.filter((post) => post.title.toLowerCase().includes(filter.query));
-  }, [filter.query, sortedPosts]);
-
+  const sortrdAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
     setModal(false);
