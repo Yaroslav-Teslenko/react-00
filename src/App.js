@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./styles/App.css";
 import PostList from "./components/PostList";
 // import MyButton from "./components/UI/button/MyButton";
@@ -9,16 +9,27 @@ import PostFilter from "./components/PostFilter";
 import MyModal from "./components/UI/MyModal/MyModal";
 import MyButton from "./components/UI/button/MyButton";
 import { usePosts } from "./components/hooks/usePosts";
+import axios from "axios";
 function App() {
-  const [posts, setPosts] = useState([
-    { id: 1, title: "1 aa", body: "eeee" },
-    { id: 2, title: "2 bb 3", body: "ff" },
-    { id: 3, title: "3 Ccc", body: "dd" },
-  ]);
-
+  // const [posts, setPosts] = useState([
+  //   { id: 1, title: "1 aa", body: "eeee" },
+  //   { id: 2, title: "2 bb 3", body: "ff" },
+  //   { id: 3, title: "3 Ccc", body: "dd" },
+  // ]);
+  const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState({ sort: "", query: "" });
-  const [modal, setModal] = useState();
+  const [modal, setModal] = useState(false);
+
   const sortrdAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      const responce = await axios.get("https://jsonplaceholder.typicode.com/posts");
+      console.log(responce.data);
+      setPosts(responce.data);
+    }
+  }, []);
+
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
     setModal(false);
@@ -45,16 +56,34 @@ function App() {
   );
 }
 
-/*
-useMemo(callback, depts[])
-производит вычисления, в данном случае сортирует массив
-запоминает результат этих вычислений и кэширует
-(подобное поведение называется мемоизация).
- на каждую перерисовку компонента она не пересчитывает заново, не сортирует
-массив вновь. она достает отсортированный массив из кэша.
-но каждый раз когда какая-то из зависимости (depts) изменилось,
-например мы выбрали другой алгоритм сортировки, то функция вновь пересчитывает и кеширует результат выполнения до тех пор, пока опять одна из зависимости не изменится.
-если массив зависимостей (depts) пустой, то функция отработает единожды, запомнит результат и больше не вызывается */
+/*жизненный цикл компонента
+ каждый
+- монтирование (mount)
+это когда создается компонент и в монтируется в дом дерево
+- обновления компонента (update)
+например мы изменили состоянии, произошела перерисовка компонента. это стадия активной жизни компонента, когда он работает , когда мы его видим  - - размонтирование unmount
+когда он больше не нужен, и его удаляем. например мы хотим его скрыть
+или же мы переходим на другую страницу и за ненадобностью react его уничтожает
+
+
+useEffect(callback, depts[]) - отслеживает стадии жизненного цикла
+
+1) useEffect(()=>{ fetchPosts()}, [])
+когда массив зависимости пустой,  callback отработает лишь единожды
+когда компонент был вмонтирован, таким образом мы можем
+отследить эту стадию монтирования и выполнить нужные для нас действия
+
+2) useEffect( ()=>{fetchPosts()}, [filter])
+для того чтобы следить за изменениями, необходимо добавить какие-то зависимости в массив
+
+
+3) useEffect( ()=> {
+  fetchPosts()
+  return ()=>{ делаем очистку}
+}, [filter])
+
+если возвращает callback какую-то функцию,  то эта функция будет вызвана как раз в момент демонтирования компонента
+*/
 
 /* Управляемый компонент
 const [title, setTitle] = useState("");
