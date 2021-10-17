@@ -5,6 +5,7 @@ import PostList from "./components/PostList";
 import MyInput from "./components/UI/input/MyInput";
 import PostForm from "./components/PostForm";
 import MySelect from "./components/UI/select/MySelect";
+import PostFilter from "./components/PostFilter";
 function App() {
   const [posts, setPosts] = useState([
     { id: 1, title: "1 aa", body: "eeee" },
@@ -12,41 +13,21 @@ function App() {
     { id: 3, title: "3 Ccc", body: "dd" },
   ]);
 
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const [selectedSort, setSelectedSort] = useState("");
-  /* помним, что состоянии напрямую изменять нельзя развернем посты в новый массив и отсортируем уже его*/
-
-  /*
- function getSortedPosts() {
-    if (selectedSort) {
-      return [...posts].sort((a, b) => a[selectedSort].localeCompare(b[selectedSort]));
-    }
-    return posts;
-  }
-  функция каждый раз вызывается и каждый раз мы сортируем массив.
-  функция вызывается на каждую перерисовку, на каждый render компонента.
-  такое поведение нас не устраивает , это нерационально.
-  Поэтому исюользуем    useMemo(callback, depts)
-*/
+  const [filter, setFilter] = useState({ sort: "", query: "" });
 
   const sortedPosts = useMemo(() => {
     //console.log("sortedPosts");
-    if (selectedSort) {
-      return [...posts].sort((a, b) => a[selectedSort].localeCompare(b[selectedSort]));
+    if (filter.sort) {
+      return [...posts].sort((a, b) => a[filter.sort].localeCompare(b[filter.sort]));
     }
     return posts;
 
     /* теперь в константе sortedPosts у нас лежит еще один массив отсортированый,  и при этом массив пост никак не изменяется. на  основании этого отсортированного массива мы можем делать поиск */
-  }, [selectedSort, posts]);
+  }, [filter.sort, posts]);
 
   const sortrdAndSearchedPosts = useMemo(() => {
-    return sortedPosts.filter((post) => post.title.toLowerCase().includes(searchQuery));
-  }, [searchQuery, sortedPosts]);
-
-  const sortPosts = (sort) => {
-    setSelectedSort(sort);
-  };
+    return sortedPosts.filter((post) => post.title.toLowerCase().includes(filter.query));
+  }, [filter.query, sortedPosts]);
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
@@ -59,25 +40,11 @@ function App() {
       {/* передаем фунц-ю , хтобы получить новое значение */}
       <PostForm create={createPost} />
       <hr style={{ margin: "15px" }} />
-      <div>
-        <MyInput value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="find"></MyInput>
-        <MySelect
-          value={selectedSort}
-          onChange={sortPosts}
-          defaultValue="Сoртировка"
-          options={[
-            { value: "title", name: "По названию" },
-            { value: "body", name: "По содержанию" },
-          ]}
-        >
-          {" "}
-        </MySelect>
-      </div>
-
+      <PostFilter filter={filter} setFilter={setFilter} />
       {/* передаем фунц-ю remove */}
       {/* + условная отрисовка */}
       {/*sortrdAndSearchedPosts - передаем  отфильтрованый и отсортированный массив  */}
-      {sortrdAndSearchedPosts.length !== 0 ? <PostList posts={sortrdAndSearchedPosts} remove={removePost} title="Список постов" /> : <h1 style={{ textAlign: "center" }}>Empty</h1>}
+      <PostList posts={sortrdAndSearchedPosts} remove={removePost} title="Список постов" /> :
     </div>
   );
 }
