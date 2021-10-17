@@ -31,7 +31,7 @@ function App() {
   const [totalPages, setTotalPages] = useState(0);
   const [limit, setLimit] = useState(5);
   const [page, setPage] = useState(1);
-  const [fetchPosts, isPostLoading, postError] = useFetching(async () => {
+  const [fetchPosts, isPostLoading, postError] = useFetching(async (limit, page) => {
     const responce = await PostService.getAll(limit, page);
     setPosts(responce.data);
     const totalCount = responce.headers["x-total-count"];
@@ -42,8 +42,8 @@ function App() {
   let pageArray = getPagesArray(totalPages);
 
   useEffect(() => {
-    fetchPosts();
-  }, [page]);
+    fetchPosts(limit, page);
+  }, []);
 
   const changePage = (page) => {
     /* у такого подхода будут некоторые проблемы
@@ -59,10 +59,12 @@ function App() {
      useEffect(() => { fetchPosts();}, [page]);
      a здесь вызов этой функции changePage убрать
      таким образом useEffect() будет следить за изменением странице и мы будем получать нужные данные .
-
+     другой способ - limit, page передать в useFetching
+      useFetching(async (limit, page) =>...
+      useEffect(() => {fetchPosts(limit, page);}, []);
     */
     setPage(page);
-    // fetchPosts();
+    fetchPosts(limit, page);
   };
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
