@@ -6,6 +6,8 @@ import MyInput from "./components/UI/input/MyInput";
 import PostForm from "./components/PostForm";
 import MySelect from "./components/UI/select/MySelect";
 import PostFilter from "./components/PostFilter";
+import MyModal from "./components/UI/MyModal/MyModal";
+import MyButton from "./components/UI/button/MyButton";
 function App() {
   const [posts, setPosts] = useState([
     { id: 1, title: "1 aa", body: "eeee" },
@@ -14,7 +16,7 @@ function App() {
   ]);
 
   const [filter, setFilter] = useState({ sort: "", query: "" });
-
+  const [modal, setModal] = useState();
   const sortedPosts = useMemo(() => {
     //console.log("sortedPosts");
     if (filter.sort) {
@@ -31,15 +33,21 @@ function App() {
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
+    setModal(false);
   };
   const removePost = (post) => {
     setPosts(posts.filter((p) => p.id !== post.id));
   };
   return (
     <div className="App">
-      {/* передаем фунц-ю , хтобы получить новое значение */}
-      <PostForm create={createPost} />
+      <MyButton style={{ margin: "15px" }} onClick={() => setModal(true)}>
+        {" "}
+        Создать пользователя
+      </MyButton>
       <hr style={{ margin: "15px" }} />
+      <MyModal visible={modal} setVisible={setModal}>
+        <PostForm create={createPost} />
+      </MyModal>
       <PostFilter filter={filter} setFilter={setFilter} />
       {/* передаем фунц-ю remove */}
       {/* + условная отрисовка */}
