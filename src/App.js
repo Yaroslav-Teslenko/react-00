@@ -7,6 +7,7 @@ import PostForm from "./components/PostForm";
 import MySelect from "./components/UI/select/MySelect";
 import PostFilter from "./components/PostFilter";
 import MyModal from "./components/UI/MyModal/MyModal";
+import Loader from "./components/UI/Loader/Loader";
 import MyButton from "./components/UI/button/MyButton";
 import { usePosts } from "./components/hooks/usePosts";
 import PostService from "./API/PostService";
@@ -17,14 +18,19 @@ function App() {
   const [modal, setModal] = useState(false);
 
   const sortrdAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
-
+  const [isPostLoading, setPostLoading] = useState(false);
   useEffect(() => {
     fetchPosts();
   }, []);
 
   async function fetchPosts() {
-    const responce = await PostService.getAll();
-    setPosts(responce.data);
+    setPostLoading(true);
+    setTimeout(async () => {
+      // для демострации loadera
+      const posts = await PostService.getAll();
+      setPosts(posts);
+      setPostLoading(false);
+    }, 1000);
   }
 
   const createPost = (newPost) => {
@@ -45,10 +51,13 @@ function App() {
         <PostForm create={createPost} />
       </MyModal>
       <PostFilter filter={filter} setFilter={setFilter} />
-      {/* передаем фунц-ю remove */}
-      {/* + условная отрисовка */}
-      {/*sortrdAndSearchedPosts - передаем  отфильтрованый и отсортированный массив  */}
-      <PostList posts={sortrdAndSearchedPosts} remove={removePost} title="Список постов" />
+      {isPostLoading ? (
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}>
+          <Loader />
+        </div>
+      ) : (
+        <PostList posts={sortrdAndSearchedPosts} remove={removePost} title="Список постов" />
+      )}
     </div>
   );
 }
