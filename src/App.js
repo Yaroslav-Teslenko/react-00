@@ -9,8 +9,9 @@ import PostFilter from "./components/PostFilter";
 import MyModal from "./components/UI/MyModal/MyModal";
 import Loader from "./components/UI/Loader/Loader";
 import MyButton from "./components/UI/button/MyButton";
-import { usePosts } from "./components/hooks/usePosts";
+import { usePosts } from "./hooks/usePosts";
 import PostService from "./API/PostService";
+import { useFetching } from "./hooks/useFetching";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -18,20 +19,16 @@ function App() {
   const [modal, setModal] = useState(false);
 
   const sortrdAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
-  const [isPostLoading, setPostLoading] = useState(false);
+  // const [isPostLoading, setPostLoading] = useState(false);
+
+  const [fetchPosts, isPostLoading, postError] = useFetching(async () => {
+    const posts = await PostService.getAll();
+    setPosts(posts);
+  });
+
   useEffect(() => {
     fetchPosts();
   }, []);
-
-  async function fetchPosts() {
-    setPostLoading(true);
-    setTimeout(async () => {
-      // для демострации loadera
-      const posts = await PostService.getAll();
-      setPosts(posts);
-      setPostLoading(false);
-    }, 1000);
-  }
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
@@ -51,6 +48,8 @@ function App() {
         <PostForm create={createPost} />
       </MyModal>
       <PostFilter filter={filter} setFilter={setFilter} />
+      {postError && <h1>Произошла ошибка {postError} </h1>}
+
       {isPostLoading ? (
         <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}>
           <Loader />
