@@ -52,7 +52,7 @@ function App() {
       {/* передаем фунц-ю remove */}
       {/* + условная отрисовка */}
       {/*sortrdAndSearchedPosts - передаем  отфильтрованый и отсортированный массив  */}
-      <PostList posts={sortrdAndSearchedPosts} remove={removePost} title="Список постов" /> :
+      <PostList posts={sortrdAndSearchedPosts} remove={removePost} title="Список постов" />
     </div>
   );
 }
