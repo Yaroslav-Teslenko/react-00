@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import "./styles/App.css";
 import PostList from "./components/PostList";
 // import MyButton from "./components/UI/button/MyButton";
@@ -7,9 +7,9 @@ import PostForm from "./components/PostForm";
 import MySelect from "./components/UI/select/MySelect";
 function App() {
   const [posts, setPosts] = useState([
-    { id: 1, title: "4JavaScript", body: "description" },
-    { id: 2, title: "2JavaScript2", body: "description2" },
-    { id: 3, title: "1JavaScript3", body: "description3" },
+    { id: 1, title: "1 aa", body: "eeee" },
+    { id: 2, title: "2 bb 3", body: "ff" },
+    { id: 3, title: "3 Ccc", body: "dd" },
   ]);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,17 +17,33 @@ function App() {
   const [selectedSort, setSelectedSort] = useState("");
   /* помним, что состоянии напрямую изменять нельзя развернем посты в новый массив и отсортируем уже его*/
 
-  function getSortedPosts() {
+  /*
+ function getSortedPosts() {
     if (selectedSort) {
-      /* функция каждый раз вызывается и каждый раз мы сортируем массив.
-        функция вызывается на каждую перерисовку, на каждый render компонента.
-        такое поведение нас не устраивает , это нерационально */
-      console.log("getSortedPosts");
       return [...posts].sort((a, b) => a[selectedSort].localeCompare(b[selectedSort]));
     }
     return posts;
   }
-  const sortedPosts = getSortedPosts();
+  функция каждый раз вызывается и каждый раз мы сортируем массив.
+  функция вызывается на каждую перерисовку, на каждый render компонента.
+  такое поведение нас не устраивает , это нерационально.
+  Поэтому исюользуем    useMemo(callback, depts)
+*/
+
+  const sortedPosts = useMemo(() => {
+    //console.log("sortedPosts");
+    if (selectedSort) {
+      return [...posts].sort((a, b) => a[selectedSort].localeCompare(b[selectedSort]));
+    }
+    return posts;
+
+    /* теперь в константе sortedPosts у нас лежит еще один массив отсортированый,  и при этом массив пост никак не изменяется. на  основании этого отсортированного массива мы можем делать поиск */
+  }, [selectedSort, posts]);
+
+  const sortrdAndSearchedPosts = useMemo(() => {
+    return sortedPosts.filter((post) => post.title.toLowerCase().includes(searchQuery));
+  }, [searchQuery, sortedPosts]);
+
   const sortPosts = (sort) => {
     setSelectedSort(sort);
   };
@@ -44,7 +60,7 @@ function App() {
       <PostForm create={createPost} />
       <hr style={{ margin: "15px" }} />
       <div>
-        <MyInput vaue={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="find"></MyInput>
+        <MyInput value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="find"></MyInput>
         <MySelect
           value={selectedSort}
           onChange={sortPosts}
@@ -60,11 +76,22 @@ function App() {
 
       {/* передаем фунц-ю remove */}
       {/* + условная отрисовка */}
-
-      {posts.length !== 0 ? <PostList posts={sortedPosts} remove={removePost} title="Список постов" /> : <h1 style={{ textAlign: "center" }}>Empty</h1>}
+      {/*sortrdAndSearchedPosts - передаем  отфильтрованый и отсортированный массив  */}
+      {sortrdAndSearchedPosts.length !== 0 ? <PostList posts={sortrdAndSearchedPosts} remove={removePost} title="Список постов" /> : <h1 style={{ textAlign: "center" }}>Empty</h1>}
     </div>
   );
 }
+
+/*
+useMemo(callback, depts[])
+производит вычисления, в данном случае сортирует массив
+запоминает результат этих вычислений и кэширует
+(подобное поведение называется мемоизация).
+ на каждую перерисовку компонента она не пересчитывает заново, не сортирует
+массив вновь. она достает отсортированный массив из кэша.
+но каждый раз когда какая-то из зависимости (depts) изменилось,
+например мы выбрали другой алгоритм сортировки, то функция вновь пересчитывает и кеширует результат выполнения до тех пор, пока опять одна из зависимости не изменится.
+если массив зависимостей (depts) пустой, то функция отработает единожды, запомнит результат и больше не вызывается */
 
 /* Управляемый компонент
 const [title, setTitle] = useState("");
