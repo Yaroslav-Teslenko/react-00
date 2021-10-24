@@ -9,3 +9,11 @@ https://reactcommunity.org/react-transition-group/
 ## axios
 
 ### `npm i axios`
+
+## React Router
+
+https://reactrouter.com/web/guides/quick-start
+
+- это набор компонентов навигации, которые декларативно объединяются с вашим приложением. Если вы хотите иметь URL-адреса с закладками для своего веб-приложения или составной способ навигации в React Native, React Router работает везде, где React выполняет рендеринг - так что выбирайте!
+
+### npm install react-router-dom
