@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./styles/App.css";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
@@ -7,6 +7,10 @@ import AppRouter from "./components/AppRouter";
 import { AuthContext } from "./context";
 function App() {
   const [isAuth, setIsAuth] = useState(false);
+  const [isLoading, setLoading] = useState(true);
+  /* на момент пока идет авторизация роутер у нас не работает и он начинает работать только после того как известно
+    авторизован пользователь или же нет
+    для предотвращения редиректа при обновлении, огда идет проверка isAuth*/
   useEffect(() => {
     if (localStorage.getItem("auth")) {
       setIsAuth(true);
@@ -31,7 +35,7 @@ function App() {
         ...
             setIsAuth(true);
     */
-    <AuthContext.Provider value={{ isAuth, setIsAuth }}>
+    <AuthContext.Provider value={{ isAuth, setIsAuth, isLoading }}>
       <BrowserRouter>
         <Navbar />
         <AppRouter />
