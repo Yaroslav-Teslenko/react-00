@@ -7,6 +7,12 @@ import AppRouter from "./components/AppRouter";
 import { AuthContext } from "./context";
 function App() {
   const [isAuth, setIsAuth] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("auth")) {
+      setIsAuth(true);
+    }
+    setLoading(false);
+  }, []);
   return (
     /* чтобы реализовать роутинг нам необходимо все приложение обернуть в компонент BrowserRouter.
     именно он будет отслеживать изменение пути и перерисовывать компоненты */
