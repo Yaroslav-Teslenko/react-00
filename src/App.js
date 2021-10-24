@@ -13,6 +13,7 @@ import { usePosts } from "./hooks/usePosts";
 import PostService from "./API/PostService";
 import { useFetching } from "./hooks/useFetching";
 import { getPageCount, getPagesArray } from "./utils/pages";
+import Pagination from "./components/UI/pagination/Pagination";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -62,6 +63,12 @@ function App() {
      другой способ - limit, page передать в useFetching
       useFetching(async (limit, page) =>...
       useEffect(() => {fetchPosts(limit, page);}, []);
+       export const useFetching = (callback) => {
+         ...
+               await callback(...args);
+               ....
+
+      важно понимать что изменение состояния это асинхронный процесс и некоторое поведение может отличаться от того которое вы ожидали поэтому важно уметь это отлаживать и находить
     */
     setPage(page);
     fetchPosts(limit, page);
@@ -93,13 +100,7 @@ function App() {
       ) : (
         <PostList posts={sortrdAndSearchedPosts} remove={removePost} title="Список постов" />
       )}
-      <div className="page">
-        {pageArray.map((p) => (
-          <span onClick={() => changePage(p)} key={p} className={page === p ? "page page__current" : "page"}>
-            {p}
-          </span>
-        ))}
-      </div>
+      <Pagination page={page} changePage={changePage} totalPages={totalPages} />
     </div>
   );
 }

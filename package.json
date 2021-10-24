@@ -14,8 +14,8 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "serve": "react-scripts start --port=5000",
-    "start": "react-scripts start --port=5000",
+    "serve": "react-scripts start ",
+    "start": "react-scripts start ",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
