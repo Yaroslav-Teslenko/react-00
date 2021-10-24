@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { privateRoutes, publicRoutes } from "../router";
+import { AuthContext } from "../context";
 const AppRouter = () => {
-  //const { isAuth, isLoading } = useContext(AuthContext);
-  const isAuth = false;
-  //console.log(isAuth);
+  const { isAuth } = useContext(AuthContext);
 
   return (
     /* switch позволяет группировать маршруты и выбрать хотя бы один из тех который есть внутри.
