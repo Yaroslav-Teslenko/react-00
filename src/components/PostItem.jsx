@@ -3,7 +3,7 @@ import { useHistory } from "react-router";
 import MyButton from "./UI/button/MyButton";
 const PostItem = (props) => {
   const router = useHistory();
-  console.log(router);
+  // console.log(router);
   return (
     <div className="post">
       <div className="post__content">
