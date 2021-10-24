@@ -1,8 +1,10 @@
 import React from "react";
 import About from "../pages/About";
 import Posts from "../pages/Posts";
+import PostIdPage from "../pages/PostIdPage";
 import Error from "../pages/Error";
 import { Route, Switch, Redirect } from "react-router-dom";
+
 const AppRouter = () => {
   return (
     /* switch позволяет группировать маршруты и выбрать хотя бы один из тех который есть внутри.
@@ -14,8 +16,12 @@ const AppRouter = () => {
       <Route path="/about">
         <About />
       </Route>
-      <Route path="/posts">
+      <Route exact path="/posts">
         <Posts />
+      </Route>
+      {/* exact для того чтобы роутер воспринимал  как разные  path="/posts" и path="/posts/:id" */}
+      <Route exact path="/posts/:id">
+        <PostIdPage />
       </Route>
       <Route path="/error">
         <Error />
